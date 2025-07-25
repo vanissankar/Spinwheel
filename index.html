@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎡 Spin the Dare Wheel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #fff;
+      padding: 0;
+      margin: 0;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 24px;
+      color: #333;
+    }
+
+    canvas {
+      margin-top: 20px;
+      border: none;
+      background-color: #ffffff;
+    }
+
+    #spinButton {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #result, #dare {
+      margin-top: 15px;
+      font-size: 18px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎡 Spin the Dare Wheel</h1>
+  <canvas id="wheelCanvas" width="360" height="280"></canvas>
+
+  <button id="spinButton">🎲 SPIN</button>
+  <div id="result"></div>
+  <div id="dare"></div>
+
+  <script>
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 100;
+
+    const numbers = [1, 2, 3, 4, 5, 6];
+    const dares = {
+      1: "Do 10 jumping jacks",
+      2: "Text your crush 'Hey!'",
+      3: "Sing a song loudly",
+      4: "Do an impression of your favorite actor",
+      5: "Share an embarrassing memory",
+      6: "Dance for 10 seconds without music"
+    };
+
+    function drawWheel(highlighted = null) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < 6; i++) {
+        const angle = i * 60 * Math.PI / 180;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+
+        ctx.font = highlighted === numbers[i] ? 'bold 24px Arial' : '20px Arial';
+        ctx.fillStyle = highlighted === numbers[i] ? 'orange' : 'gray';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(numbers[i], x, y);
+      }
+    }
+
+    drawWheel();
+
+    document.getElementById('spinButton').addEventListener('click', () => {
+      const resultDiv = document.getElementById('result');
+      const dareDiv = document.getElementById('dare');
+      resultDiv.textContent = '';
+      dareDiv.textContent = '';
+
+      let count = 0;
+      let maxSpins = Math.floor(Math.random() * 10) + 20;
+      let current = 0;
+
+      const interval = setInterval(() => {
+        current = (count % 6) + 1;
+        drawWheel(current);
+        count++;
+
+        if (count >= maxSpins) {
+          clearInterval(interval);
+          resultDiv.textContent = `🎯 Wheel stopped at: ${current}`;
+          dareDiv.textContent = `🧠 Dare: ${dares[current]}`;
+        }
+      }, 100 + count * 2);  // gradual slowdown
+    });
+  </script>
+
+</body>
+</html>
